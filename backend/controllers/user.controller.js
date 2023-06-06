@@ -150,6 +150,22 @@ const deleteAllNotification = async (req, res) => {
     });
   }
 };
+const getAllDoctors = async (req, res) => {
+  try {
+    const doctor = await DoctorModel.find({ status: "approved" });
+    res.status(200).send({
+      success: true,
+      msg: "Doctor fetched successfully.",
+      data: doctor,
+    });
+  } catch (error) {
+    res.status(500).send({
+      msg: "Error while fetching the doctor",
+      error,
+      success: false,
+    });
+  }
+};
 
 module.exports = {
   login,
@@ -158,4 +174,5 @@ module.exports = {
   applyDoctor,
   getAllNotification,
   deleteAllNotification,
+  getAllDoctors,
 };
