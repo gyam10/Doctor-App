@@ -230,6 +230,26 @@ const bookAvailability = async (req, res) => {
     });
   }
 };
+
+const userAppointment = async (req, res) => {
+  try {
+    const appointment = await AppointmentModel.find({
+      userId: req.body.userId,
+    });
+    res.status(200).send({
+      success: true,
+      msg: "user Appointemnet fetched successfully.",
+      data: appointment,
+    });
+  } catch (error) {
+    res.status(500).send({
+      msg: "Error fetching appointmment",
+      err,
+      success: false,
+    });
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -240,4 +260,5 @@ module.exports = {
   getAllDoctors,
   bookAppointment,
   bookAvailability,
+  userAppointment,
 };
