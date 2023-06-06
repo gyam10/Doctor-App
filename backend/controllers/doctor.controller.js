@@ -37,5 +37,21 @@ const updateProfile = async (req, res) => {
     });
   }
 };
+const getDoctorById = async (req, res) => {
+  try {
+    const doctor = await DoctorModel.findOne({ _id: req.body.doctorId });
+    res.status(200).send({
+      success: true,
+      msg: "Doctor Successfully fetched",
+      data: doctor,
+    });
+  } catch (error) {
+    res.status(500).send({
+      msg: "Error fetching the doctor",
+      error,
+      status: false,
+    });
+  }
+};
 
-module.exports = { getDoctorInfo, updateProfile };
+module.exports = { getDoctorInfo, updateProfile, getDoctorById };
