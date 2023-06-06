@@ -2,6 +2,8 @@ const UserModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const DoctorModel = require("../models/doctor.model");
+const AppointmentModel = require("../models/appointment.model");
+const moment = require("moment");
 
 const login = async (req, res) => {
   try {
@@ -167,6 +169,67 @@ const getAllDoctors = async (req, res) => {
   }
 };
 
+const bookAppointment = async (req, res) => {
+  try {
+    req.body.date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    req.body.time = moment(req.body.time, "HH:mm").toISOString();
+    req.body.status = "pending";
+    const appointment = new AppointmentModel(req.body);
+    await appointment.save();
+    const user = await UserModel.findOne({ _id: req.body.doctorInfo.userId });
+    user.notification.push({
+      type: "New-appointment-request",
+      msg: `A new appointment request from ${req.body.userInfo.name}`,
+      onClickPath: "/user/appointment",
+    });
+    await user.save();
+    res.status(200).send({
+      success: true,
+      msg: "Appointment Booked successfully",
+    });
+  } catch (error) {
+    res.status(500).send({
+      msg: "Error booking appointment",
+      error,
+      success: false,
+    });
+  }
+};
+const bookAvailability = async (req, res) => {
+  try {
+    const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    const fromTime = moment(req.body.time, "HH:mm").subtract(1, "hours");
+    const toTime = moment(req.body.time, "HH:mm").add(1, "hours");
+    const doctorId = req.body.doctorId;
+    console.log("here");
+    const appointment = await AppointmentModel.find({
+      doctorId,
+      date,
+      time: {
+        $gte: fromTime,
+        $lte: toTime,
+      },
+    });
+
+    if (appointment.length > 0) {
+      return res.status(200).send({
+        msg: "Appointment not available at this time.",
+        success: true,
+      });
+    } else {
+      return res.status(200).send({
+        msg: "Appointment is available.",
+        success: true,
+      });
+    }
+  } catch (err) {
+    res.status(500).send({
+      msg: "Error at booking availability",
+      err,
+      success: false,
+    });
+  }
+};
 module.exports = {
   login,
   register,
@@ -175,4 +238,6 @@ module.exports = {
   getAllNotification,
   deleteAllNotification,
   getAllDoctors,
+  bookAppointment,
+  bookAvailability,
 };
