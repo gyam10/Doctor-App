@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideLoading, showLoading } from "../redux/features/alertSlice";
 import axios from "axios";
 import { BASE_URL } from "../data/constant";
+import moment from "moment";
 
 const ApplyDoctor = () => {
   const navigate = useNavigate();
@@ -15,7 +16,14 @@ const ApplyDoctor = () => {
       dispatch(showLoading());
       const response = await axios.post(
         `${BASE_URL}user/apply-doctor`,
-        { ...values, userId: user._id },
+        {
+          ...values,
+          userId: user._id,
+          timings: [
+            moment(values.timings[0]).format("HH:mm"),
+            moment(values.timings[1]).format("HH:mm"),
+          ],
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
