@@ -1,12 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Layout from "../components/layout";
+import { BASE_URL } from "../data/constant";
+import { Row } from "antd";
+import DoctorList from "../components/doctor.component";
 
 const HomePage = () => {
+  const [doctor, setDoctor] = useState([]);
+
   const getUserData = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/user/getUserData",
+        `${BASE_URL}user/getAllDoctors`,
         {},
         {
           headers: {
@@ -14,6 +19,9 @@ const HomePage = () => {
           },
         }
       );
+      if (response.data.success) {
+        setDoctor(response.data.data);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +34,10 @@ const HomePage = () => {
   return (
     <>
       <Layout>
-        <h1>Home Page</h1>
+        <h1 className="text-center">Home Page</h1>
+        <Row>
+          {doctor && doctor.map((doctor) => <DoctorList doctor={doctor} />)}
+        </Row>
       </Layout>
     </>
   );
