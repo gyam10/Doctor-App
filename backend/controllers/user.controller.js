@@ -176,6 +176,7 @@ const bookAppointment = async (req, res) => {
     req.body.status = "pending";
     const appointment = new AppointmentModel(req.body);
     await appointment.save();
+    // console.log("tesing", appointment);
     const user = await UserModel.findOne({ _id: req.body.doctorInfo.userId });
     user.notification.push({
       type: "New-appointment-request",
@@ -201,7 +202,7 @@ const bookAvailability = async (req, res) => {
     const fromTime = moment(req.body.time, "HH:mm").subtract(1, "hours");
     const toTime = moment(req.body.time, "HH:mm").add(1, "hours");
     const doctorId = req.body.doctorId;
-    console.log("here");
+
     const appointment = await AppointmentModel.find({
       doctorId,
       date,
