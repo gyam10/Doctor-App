@@ -23,9 +23,8 @@ const NotificationPage = () => {
           },
         }
       );
-
+      window.location.reload();
       dispatch(hideLoading());
-
       if (response.data.success) {
         message.success(response.data.msg);
       } else {
@@ -76,8 +75,8 @@ const NotificationPage = () => {
                 Mark All Read
               </h5>
             </div>
-            {user?.notification.map((notificationMsg) => (
-              <div className="card" style={{ cursor: "pointer" }}>
+            {user?.notification.map((notificationMsg, index) => (
+              <div className="card" style={{ cursor: "pointer" }} key={index}>
                 <div
                   className="class-text"
                   onClick={() => navigate(notificationMsg.data.onClickPath)}
@@ -97,8 +96,8 @@ const NotificationPage = () => {
                 Delete All Read
               </h5>
             </div>
-            {user?.seeNotification.map((notificationMsg) => (
-              <div className="card" style={{ cursor: "pointer" }}>
+            {user?.seeNotification.map((notificationMsg, index) => (
+              <div className="card" style={{ cursor: "pointer" }} key={index}>
                 <div
                   className="class-text"
                   onClick={() => navigate(notificationMsg.data.onClickPath)}

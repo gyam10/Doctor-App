@@ -69,6 +69,7 @@ const BookAppointment = () => {
 
   // Booking
   const handleBooking = async () => {
+    // console.log("here", date, time);
     try {
       setIsAvailable(true);
       if (!date && !time) {
@@ -95,10 +96,12 @@ const BookAppointment = () => {
 
       if (response.data.success) {
         setDoctor(response.data.data);
+        message.success(response.data.msg);
       }
     } catch (error) {
       dispatch(hideLoading());
       console.log(error);
+      message.error("Something went wrong.");
     }
   };
 
@@ -122,19 +125,19 @@ const BookAppointment = () => {
               </h4>
               <div className="d-flex flex-column w-50">
                 <DatePicker
+                  aria-required={"true"}
                   className="m-2"
                   format="DD-MM-YYYY"
                   onChange={(value) => {
-                    setIsAvailable(false);
-                    setDate(moment(value).format("DD-MM-YYYY"));
+                    setDate(moment(value.$d).format("DD-MM-YYYY"));
                   }}
                 />
                 <TimePicker
-                  className="m-2"
+                  aria-required={"true"}
                   format="HH:mm"
+                  className="mt-3"
                   onChange={(value) => {
-                    setIsAvailable(false);
-                    setTime(moment(value).format("HH:mm"));
+                    setTime(moment(value.$d).format("HH:mm"));
                   }}
                 />
                 <button
